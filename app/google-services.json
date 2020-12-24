@@ -1,0 +1,40 @@
+{
+  "project_info": {
+    "project_number": "305872567083",
+    "firebase_url": "https://excrud-5681c.firebaseio.com",
+    "project_id": "excrud-5681c",
+    "storage_bucket": "excrud-5681c.appspot.com"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:305872567083:android:734ea85574ce847a6ee36e",
+        "android_client_info": {
+          "package_name": "com.example.excrud"
+        }
+      },
+      "oauth_client": [
+        {
+          "client_id": "305872567083-vng8te8rrnu8qcje0l0am8se3ubr1mtk.apps.googleusercontent.com",
+          "client_type": 3
+        }
+      ],
+      "api_key": [
+        {
+          "current_key": "AIzaSyBnDJHdMy5MuaeQOmP3_s7Mz9L8UkYaYew"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": [
+            {
+              "client_id": "305872567083-vng8te8rrnu8qcje0l0am8se3ubr1mtk.apps.googleusercontent.com",
+              "client_type": 3
+            }
+          ]
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}
