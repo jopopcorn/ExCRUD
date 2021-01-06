@@ -3,8 +3,8 @@ package com.example.excrud
 import android.content.Intent
 import androidx.appcompat.app.AppCompatActivity
 import android.os.Bundle
-import android.util.Log
-import android.widget.Toast
+import android.view.Menu
+import android.view.MenuItem
 import com.example.excrud.databinding.ActivityMainBinding
 import com.google.firebase.firestore.FirebaseFirestore
 import java.text.SimpleDateFormat
@@ -20,28 +20,34 @@ class MainActivity : AppCompatActivity() {
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         binding = ActivityMainBinding.inflate(layoutInflater)
-//        binding.memoRecyclerview
         setContentView(binding.root)
         //TODO Adapter 만들어서 연결하기
-        // 클릭 리스너 추가하고 누르면 메모 확장하고 수정 가능하게 만듦. 삭제 버튼도 안에 넣기
+        // 리싸이클러뷰 클릭 리스너 추가 & 누르면 메모 확장하고 수정 가능하게 만듦. 삭제 버튼도 안에 넣기
 
         val currentTime = Calendar.getInstance().time
-        val date = SimpleDateFormat("yyyy.MM.dd", Locale.KOREA).format(currentTime)
+        val currentDate = SimpleDateFormat("yyyy.MM.dd", Locale.KOREA).format(currentTime)
 
         val db = FirebaseFirestore.getInstance()
+
         val memo = hashMapOf(
-            "title" to "제목1",
-            "content" to "내용 블라블라 안녕하세요 저는 팝콘 주인 조수입닌다 반가방가룽~ 일요일에 공부하니 기분이 좃내요 ㅋㅋ",
-            "date" to date
+            "content" to "내용 블라블라 안녕하세요 내용 블라블라 안녕하세요 내용 블라블라 안녕하세요 내용 블라블라 안녕하세요 내용 블라블라 안녕하세요 ",
+            "date" to currentDate
         )
 
-        binding.addMemoBtn.setOnClickListener {
-            val intent = Intent(this, EditActivity::class.java)
-            startActivity(intent)
+        //TODO 툴바 달기. 버튼 아이콘 변경, 오른쪽 버튼 클릭시 메모 작성 화면으로 이동
+
+        setSupportActionBar(binding.toolbar)
+
+        supportActionBar?.apply {
+            setDisplayHomeAsUpEnabled(false)
+            setDisplayShowTitleEnabled(false)
         }
 
 
-
+//        binding.addbtn.setOnClickListener {
+//            val intent = Intent(this, EditActivity::class.java)
+//            startActivity(intent)
+//        }
 
         //문서 이름 안짓고 그냥 막 추가하는 코드
 //            db.collection("memos")
@@ -97,5 +103,20 @@ class MainActivity : AppCompatActivity() {
          }
         * */
 
+    }
+
+    override fun onCreateOptionsMenu(menu: Menu?): Boolean {
+        menuInflater.inflate(R.menu.menu_main, menu)
+        return true
+    }
+
+    override fun onOptionsItemSelected(item: MenuItem): Boolean {
+        when (item.itemId) {
+            R.id.action_edit -> {
+                //TODO 다중 삭제 / 북마크 (즐찾) 가능한 메서드
+                return true
+            }
+        }
+        return super.onOptionsItemSelected(item)
     }
 }

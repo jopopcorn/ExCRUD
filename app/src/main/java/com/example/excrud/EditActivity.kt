@@ -5,7 +5,6 @@ import android.os.Bundle
 import android.text.Editable
 import android.text.TextWatcher
 import android.util.Log
-import android.view.Menu
 import android.view.MenuItem
 import com.example.excrud.databinding.ActivityEditBinding
 import com.google.firebase.firestore.FirebaseFirestore
@@ -60,7 +59,6 @@ class EditActivity : AppCompatActivity(), TextWatcher {
     private fun updateMemo() {
         val db = FirebaseFirestore.getInstance()
         val data = hashMapOf(
-            "title" to binding.titleEditText.text,
             "content" to binding.contentEditText.text,
             "date" to binding.dateText.text
         )
