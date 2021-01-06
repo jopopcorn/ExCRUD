@@ -1,14 +1,16 @@
 package com.example.excrud
 
-import android.content.Intent
 import androidx.appcompat.app.AppCompatActivity
 import android.os.Bundle
 import android.view.Menu
 import android.view.MenuItem
+import androidx.recyclerview.widget.LinearLayoutManager
+import androidx.recyclerview.widget.RecyclerView
 import com.example.excrud.databinding.ActivityMainBinding
 import com.google.firebase.firestore.FirebaseFirestore
 import java.text.SimpleDateFormat
 import java.util.*
+import kotlin.collections.ArrayList
 
 class MainActivity : AppCompatActivity() {
     companion object {
@@ -16,33 +18,18 @@ class MainActivity : AppCompatActivity() {
     }
 
     private lateinit var binding: ActivityMainBinding
+    private lateinit var memoViewManager: RecyclerView.LayoutManager
+    private var memoList : ArrayList<Memo> = arrayListOf()
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         binding = ActivityMainBinding.inflate(layoutInflater)
         setContentView(binding.root)
-        //TODO Adapter 만들어서 연결하기
-        // 리싸이클러뷰 클릭 리스너 추가 & 누르면 메모 확장하고 수정 가능하게 만듦. 삭제 버튼도 안에 넣기
-
-        val currentTime = Calendar.getInstance().time
-        val currentDate = SimpleDateFormat("yyyy.MM.dd", Locale.KOREA).format(currentTime)
+        // TODO 리싸이클러뷰 클릭 리스너 추가 & 누르면 메모 확장하고 수정 가능하게 만듦. 삭제 버튼도 안에 넣기
 
         val db = FirebaseFirestore.getInstance()
 
-        val memo = hashMapOf(
-            "content" to "내용 블라블라 안녕하세요 내용 블라블라 안녕하세요 내용 블라블라 안녕하세요 내용 블라블라 안녕하세요 내용 블라블라 안녕하세요 ",
-            "date" to currentDate
-        )
-
-        //TODO 툴바 달기. 버튼 아이콘 변경, 오른쪽 버튼 클릭시 메모 작성 화면으로 이동
-
-        setSupportActionBar(binding.toolbar)
-
-        supportActionBar?.apply {
-            setDisplayHomeAsUpEnabled(false)
-            setDisplayShowTitleEnabled(false)
-        }
-
+        initView()
 
 //        binding.addbtn.setOnClickListener {
 //            val intent = Intent(this, EditActivity::class.java)
@@ -103,6 +90,48 @@ class MainActivity : AppCompatActivity() {
          }
         * */
 
+    }
+
+    private fun initView(){
+        initToolbar()
+        initRecyclerView()
+    }
+
+    private fun initToolbar() {
+        setSupportActionBar(binding.toolbar)
+
+        supportActionBar?.apply {
+            setDisplayHomeAsUpEnabled(false)
+            setDisplayShowTitleEnabled(false)
+        }
+    }
+
+    private fun initRecyclerView() {
+        memoViewManager = LinearLayoutManager(this)
+        binding.memoRecyclerview.apply {
+            layoutManager = memoViewManager
+            adapter = MemoAdapter(initMemoData())
+            setHasFixedSize(true)
+        }
+    }
+
+    private fun getDate() : String{
+        val currentTime = Calendar.getInstance().time
+        return SimpleDateFormat("yyyy.MM.dd", Locale.KOREA).format(currentTime)
+    }
+
+    private fun initMemoData() : ArrayList<Memo>{
+        if(memoList.size == 0){
+            val memo = Memo().apply {
+                content = "내용 블라블라 안녕하세요 내용 블라블라 안녕하세요 내용 블라블라 안녕하세요 내용 블라블라 안녕하세요 내용 블라블라 안녕하세요"
+                date = getDate()
+            }
+
+            for(i in 1..20){
+                memoList.add(memo)
+            }
+        }
+        return memoList
     }
 
     override fun onCreateOptionsMenu(menu: Menu?): Boolean {
