@@ -53,6 +53,7 @@ class MainActivity : AppCompatActivity() {
             layoutManager = memoViewManager
             adapter = MemoAdapter(initMemoData()) { memo -> adapterOnClick(memo) }
             setHasFixedSize(true)
+            addItemDecoration(DividerItemDecoration(context, R.drawable.line_divider, 20))
         }
     }
 
