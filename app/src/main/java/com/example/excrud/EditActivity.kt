@@ -2,6 +2,8 @@ package com.example.excrud
 
 import androidx.appcompat.app.AppCompatActivity
 import android.os.Bundle
+import android.text.Editable
+import android.text.TextWatcher
 import android.util.Log
 import android.view.MenuItem
 import com.example.excrud.databinding.ActivityEditBinding
@@ -9,12 +11,15 @@ import com.google.firebase.firestore.FirebaseFirestore
 import java.text.SimpleDateFormat
 import java.util.*
 
-class EditActivity : AppCompatActivity(){
+class EditActivity : AppCompatActivity(), TextWatcher {
     companion object {
         private const val TAG = "EditActivity"
     }
 
     private lateinit var binding: ActivityEditBinding
+    private val db = FirebaseFirestore.getInstance()
+    private val docRef = db.collection("memos")
+
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -54,6 +59,7 @@ class EditActivity : AppCompatActivity(){
 
     private fun initView() {
         initToolbar()
+        binding.contentEditText.addTextChangedListener(this)
     }
 
     private fun initToolbar() {
@@ -78,16 +84,14 @@ class EditActivity : AppCompatActivity(){
     }
 
     private fun updateMemo() {
-        val db = FirebaseFirestore.getInstance()
-        val data = Memo().apply{
+        val data = Memo().apply {
             content = binding.contentEditText.text.toString()
             date = binding.dateText.text.toString()
             bookmark = false
         }
 
-        db.collection("memos")
-            .document("${intent.getIntExtra("size", 4444)}")
-            .set({ data })
+        docRef.document("${intent.getIntExtra("size", 4444)}")
+            .set(data)
             .addOnSuccessListener {
                 Log.d(TAG, "DocumentSnapshot added")
             }
@@ -99,5 +103,15 @@ class EditActivity : AppCompatActivity(){
     override fun onBackPressed() {
         super.onBackPressed()
         updateMemo()
+    }
+
+    override fun beforeTextChanged(p0: CharSequence?, p1: Int, p2: Int, p3: Int) {
+    }
+
+    override fun onTextChanged(p0: CharSequence?, p1: Int, p2: Int, p3: Int) {
+        updateDate()
+    }
+
+    override fun afterTextChanged(p0: Editable?) {
     }
 }

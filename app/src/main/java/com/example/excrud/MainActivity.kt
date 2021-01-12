@@ -48,7 +48,7 @@ class MainActivity : AppCompatActivity() {
     }
 
     private fun initRecyclerView() {
-        memoViewManager = LinearLayoutManager(this)
+        memoViewManager = LinearLayoutManager(this, LinearLayoutManager.VERTICAL, true)
         memoAdapter = MemoAdapter(memoList) { memo -> adapterOnClick(memo) }
         binding.memoRecyclerview.apply {
             layoutManager = memoViewManager
@@ -59,7 +59,7 @@ class MainActivity : AppCompatActivity() {
     }
 
     private fun adapterOnClick(memo: Memo) {
-        //TODO memo position 가져와서 size에 putExtra 하기
+        //TODO memo position 가져와서 putExtra 하기
         val intent = Intent(this, EditActivity()::class.java)
         intent.putExtra("content", memo.content)
         intent.putExtra("date", memo.date)
