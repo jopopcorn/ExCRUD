@@ -60,11 +60,12 @@ class MainActivity : AppCompatActivity() {
 
     private fun adapterOnClick(memo: Memo) {
         //TODO memo position 가져와서 putExtra 하기
-        val intent = Intent(this, EditActivity()::class.java)
-        intent.putExtra("content", memo.content)
-        intent.putExtra("date", memo.date)
-        intent.putExtra("size", memoList.size)
-        startActivity(intent)
+        val memoIntent = Intent(this, EditActivity()::class.java).apply {
+            putExtra("content", memo.content)
+            putExtra("date", memo.date)
+            putExtra("size", memoList.size)
+        }
+        startActivity(memoIntent)
     }
 
     private fun initMemoData() {

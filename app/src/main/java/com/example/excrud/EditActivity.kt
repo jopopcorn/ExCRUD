@@ -72,8 +72,8 @@ class EditActivity : AppCompatActivity(), TextWatcher {
     }
 
     private fun initMemo() {
-        binding.contentEditText.setText(intent.getStringExtra("content"))
-        binding.dateText.text = intent.getStringExtra("date")
+        binding.contentEditText.setText(intent.extras?.get("content").toString())
+        binding.dateText.text = intent.extras?.get("date").toString()
     }
 
     private fun updateDate() {
