@@ -5,6 +5,7 @@ import android.os.Bundle
 import android.text.Editable
 import android.text.TextWatcher
 import android.util.Log
+import android.view.Menu
 import android.view.MenuItem
 import com.example.excrud.databinding.ActivityEditBinding
 import com.google.firebase.firestore.FirebaseFirestore
@@ -27,8 +28,6 @@ class EditActivity : AppCompatActivity(), TextWatcher {
         setContentView(binding.root)
         initView()
 
-        //TODO create 모드일 때 toolbar menu icon save로 세팅,
-        // edit 모드일 때 DB에서 정보 가져오고(READ) toolbar 아이콘 delete로 세팅
         if (intent.hasExtra("content")) {
             initMemo()
         } else {
@@ -37,25 +36,6 @@ class EditActivity : AppCompatActivity(), TextWatcher {
 
     }
 
-    override fun onOptionsItemSelected(item: MenuItem) = when (item.itemId) {
-        R.id.action_save -> {
-            //TODO 입력한 메모 정보 DB에 저장하는 코드 넣기
-            updateMemo()
-            setVisible(false)
-            true
-        }
-        R.id.action_export -> {
-            //TODO 공유하는 bottomSheet 추가
-            true
-        }
-        R.id.action_delete -> {
-            //TODO 삭제할건지 묻는 다이얼로그 띄우기 deleteDialog (AlertDialog 사용)
-            true
-        }
-        else -> {
-            super.onOptionsItemSelected(item)
-        }
-    }
 
     private fun initView() {
         initToolbar()
@@ -85,12 +65,13 @@ class EditActivity : AppCompatActivity(), TextWatcher {
 
     private fun updateMemo() {
         val data = Memo().apply {
+            id = intent.extras?.get("id") as Int
             content = binding.contentEditText.text.toString()
             date = binding.dateText.text.toString()
-            bookmark = false
+            bookmark = intent.getBooleanExtra("bookmark", false)
         }
 
-        docRef.document("${intent.getIntExtra("size", 4444)}")
+        docRef.document("${data.id}")
             .set(data)
             .addOnSuccessListener {
                 Log.d(TAG, "DocumentSnapshot added")
@@ -98,10 +79,11 @@ class EditActivity : AppCompatActivity(), TextWatcher {
             .addOnFailureListener { e ->
                 Log.w(TAG, "Error and document", e)
             }
+
+        finish()
     }
 
     override fun onBackPressed() {
-        super.onBackPressed()
         updateMemo()
     }
 
@@ -113,5 +95,28 @@ class EditActivity : AppCompatActivity(), TextWatcher {
     }
 
     override fun afterTextChanged(p0: Editable?) {
+    }
+
+    override fun onCreateOptionsMenu(menu: Menu?): Boolean {
+        menuInflater.inflate(R.menu.menu_edit, menu)
+        return true
+    }
+
+    override fun onOptionsItemSelected(item: MenuItem) = when (item.itemId) {
+        R.id.action_save -> {
+            updateMemo()
+            true
+        }
+        R.id.action_export -> {
+            //TODO 공유하는 bottomSheet 추가
+            true
+        }
+        R.id.action_delete -> {
+            //TODO 삭제할건지 묻는 다이얼로그 띄우기 deleteDialog (AlertDialog 사용)
+            true
+        }
+        else -> {
+            super.onOptionsItemSelected(item)
+        }
     }
 }

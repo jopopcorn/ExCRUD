@@ -9,6 +9,7 @@ import android.view.MenuItem
 import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
 import com.example.excrud.databinding.ActivityMainBinding
+import com.google.firebase.firestore.DocumentChange
 import com.google.firebase.firestore.FirebaseFirestore
 import com.google.firebase.firestore.ktx.toObject
 import kotlin.collections.ArrayList
@@ -48,7 +49,7 @@ class MainActivity : AppCompatActivity() {
     }
 
     private fun initRecyclerView() {
-        memoViewManager = LinearLayoutManager(this, LinearLayoutManager.VERTICAL, true)
+        memoViewManager = LinearLayoutManager(this, LinearLayoutManager.VERTICAL, false)
         memoAdapter = MemoAdapter(memoList) { memo -> adapterOnClick(memo) }
         binding.memoRecyclerview.apply {
             layoutManager = memoViewManager
@@ -59,11 +60,11 @@ class MainActivity : AppCompatActivity() {
     }
 
     private fun adapterOnClick(memo: Memo) {
-        //TODO memo position 가져와서 putExtra 하기
         val memoIntent = Intent(this, EditActivity()::class.java).apply {
+            putExtra("id", memo.id)
             putExtra("content", memo.content)
             putExtra("date", memo.date)
-            putExtra("size", memoList.size)
+            putExtra("bookmark", memo.bookmark)
         }
         startActivity(memoIntent)
     }
@@ -72,8 +73,8 @@ class MainActivity : AppCompatActivity() {
         memoList.clear()
         docRef.get()
             .addOnSuccessListener { result ->
-                for (document in result) {
-                    val memo = document.toObject<Memo>()
+                result.forEach { document ->
+                    val memo = document.toObject(Memo::class.java)
                     memoList.add(memo)
                 }
                 memoAdapter.notifyDataSetChanged()
@@ -82,6 +83,7 @@ class MainActivity : AppCompatActivity() {
                 Log.d(TAG, "Error getting documents: ", exception)
             }
     }
+
 
     override fun onCreateOptionsMenu(menu: Menu?): Boolean {
         menuInflater.inflate(R.menu.menu_main, menu)
