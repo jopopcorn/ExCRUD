@@ -35,8 +35,8 @@ class MainActivity : AppCompatActivity() {
 
     private fun initView() {
         initToolbar()
+        listenToDocument()
         initRecyclerView()
-        initMemoData()
     }
 
     private fun initToolbar() {
@@ -60,6 +60,7 @@ class MainActivity : AppCompatActivity() {
     }
 
     private fun adapterOnClick(memo: Memo) {
+        //TODO memo position 가져와서 putExtra 하기
         val memoIntent = Intent(this, EditActivity()::class.java).apply {
             putExtra("id", memo.id)
             putExtra("content", memo.content)
@@ -69,21 +70,64 @@ class MainActivity : AppCompatActivity() {
         startActivity(memoIntent)
     }
 
-    private fun initMemoData() {
+    private fun listenToDocument() {
         memoList.clear()
-        docRef.get()
-            .addOnSuccessListener { result ->
-                result.forEach { document ->
-                    val memo = document.toObject(Memo::class.java)
-                    memoList.add(memo)
-                }
-                memoAdapter.notifyDataSetChanged()
+        docRef.addSnapshotListener { snapshot, e ->
+            if (e != null) {
+                Log.w(TAG, "Listen failed.", e)
+                return@addSnapshotListener
             }
-            .addOnFailureListener { exception ->
-                Log.d(TAG, "Error getting documents: ", exception)
-            }
-    }
 
+            if (snapshot != null) {
+                snapshot.documentChanges.forEach { item ->
+                    when (item.type) {
+                        DocumentChange.Type.ADDED -> {
+                            Log.d(
+                                TAG,
+                                "Document Type ADD -> ${item.document.id}, ${item.document.data}"
+                            )
+                            memoList.add(item.document.toObject(Memo::class.java))
+                            memoAdapter.notifyDataSetChanged()
+                        }
+                        DocumentChange.Type.MODIFIED -> {
+                            Log.d(
+                                TAG, "Document Type MODIFIED -> " +
+                                        "id - ${item.document.id}, old/new - ${item.oldIndex} & ${item.newIndex}" +
+                                        "${item.document.data}"
+                            )
+
+                            val memo = Memo().apply {
+                                Math.toIntExact(item.document["id"] as Long)
+                                content = item.document["content"] as String
+                                date = item.document["date"] as String
+                                bookmark = item.document["bookmark"] as Boolean
+                            }
+
+                            if (item.oldIndex == item.newIndex) {
+                                memoList[item.oldIndex] = memo
+                                memoAdapter.notifyItemChanged(item.oldIndex)
+                            } else {
+                                memoList.removeAt(item.oldIndex)
+                                memoList[item.newIndex] = memo
+                                memoAdapter.notifyItemMoved(item.oldIndex, item.newIndex)
+                            }
+                            memoAdapter.notifyDataSetChanged()
+                        }
+                        DocumentChange.Type.REMOVED -> {
+                            Log.d(
+                                TAG,
+                                "Document Type REMOVED -> ${item.document.id}, ${item.oldIndex}, ${item.document.data}"
+                            )
+                            memoList.removeAt(item.oldIndex)
+                            memoAdapter.notifyItemRemoved(item.oldIndex)
+                        }
+                    }
+                }
+            } else {
+                Log.d(TAG, "snapshot data null")
+            }
+        }
+    }
 
     override fun onCreateOptionsMenu(menu: Menu?): Boolean {
         menuInflater.inflate(R.menu.menu_main, menu)
