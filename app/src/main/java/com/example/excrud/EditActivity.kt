@@ -25,7 +25,6 @@ class EditActivity : AppCompatActivity(), TextWatcher {
     private val db = FirebaseFirestore.getInstance()
     private val docRef = db.collection("memos")
 
-
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         binding = ActivityEditBinding.inflate(layoutInflater)
@@ -39,7 +38,6 @@ class EditActivity : AppCompatActivity(), TextWatcher {
         }
 
     }
-
 
     private fun initView() {
         initToolbar()
@@ -68,20 +66,22 @@ class EditActivity : AppCompatActivity(), TextWatcher {
     }
 
     private fun updateMemo() {
-        val data = Memo(intent.extras?.get("id") as Int).apply {
-            content = binding.contentEditText.text.toString()
-            date = binding.dateText.text.toString()
-            bookmark = intent.getBooleanExtra("bookmark", false)
-        }
+        if (!binding.contentEditText.text.equals(intent.extras?.get("id") as Int)) {
+            val data = Memo(intent.extras?.get("id") as Int).apply {
+                content = binding.contentEditText.text.toString()
+                date = binding.dateText.text.toString()
+                bookmark = intent.getBooleanExtra("bookmark", false)
+            }
 
-        docRef.document("${data.id}")
-            .set(data)
-            .addOnSuccessListener {
-                Log.d(TAG, "DocumentSnapshot added")
-            }
-            .addOnFailureListener { e ->
-                Log.w(TAG, "Error and document", e)
-            }
+            docRef.document("${data.id}")
+                .set(data)
+                .addOnSuccessListener {
+                    Log.d(TAG, "DocumentSnapshot added")
+                }
+                .addOnFailureListener { e ->
+                    Log.w(TAG, "Error and document", e)
+                }
+        }
 
         finish()
     }
