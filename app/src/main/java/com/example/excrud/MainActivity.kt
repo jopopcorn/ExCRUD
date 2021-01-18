@@ -49,7 +49,7 @@ class MainActivity : AppCompatActivity() {
     }
 
     private fun initRecyclerView() {
-        memoViewManager = LinearLayoutManager(this, LinearLayoutManager.VERTICAL, false)
+        memoViewManager = LinearLayoutManager(this, LinearLayoutManager.VERTICAL, true)
         memoAdapter = MemoAdapter(memoList) { memo -> adapterOnClick(memo) }
         binding.memoRecyclerview.apply {
             layoutManager = memoViewManager
@@ -96,8 +96,7 @@ class MainActivity : AppCompatActivity() {
                                         "${item.document.data}"
                             )
 
-                            val memo = Memo().apply {
-                                Math.toIntExact(item.document["id"] as Long)
+                            val memo = Memo(Math.toIntExact(item.document["id"] as Long)).apply {
                                 content = item.document["content"] as String
                                 date = item.document["date"] as String
                                 bookmark = item.document["bookmark"] as Boolean

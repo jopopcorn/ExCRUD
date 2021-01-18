@@ -1,5 +1,8 @@
 package com.example.excrud
 
+import android.app.AlertDialog
+import android.app.Dialog
+import android.content.DialogInterface
 import androidx.appcompat.app.AppCompatActivity
 import android.os.Bundle
 import android.text.Editable
@@ -7,6 +10,7 @@ import android.text.TextWatcher
 import android.util.Log
 import android.view.Menu
 import android.view.MenuItem
+import android.widget.Toast
 import com.example.excrud.databinding.ActivityEditBinding
 import com.google.firebase.firestore.FirebaseFirestore
 import java.text.SimpleDateFormat
@@ -64,8 +68,7 @@ class EditActivity : AppCompatActivity(), TextWatcher {
     }
 
     private fun updateMemo() {
-        val data = Memo().apply {
-            id = intent.extras?.get("id") as Int
+        val data = Memo(intent.extras?.get("id") as Int).apply {
             content = binding.contentEditText.text.toString()
             date = binding.dateText.text.toString()
             bookmark = intent.getBooleanExtra("bookmark", false)
@@ -112,11 +115,49 @@ class EditActivity : AppCompatActivity(), TextWatcher {
             true
         }
         R.id.action_delete -> {
-            //TODO 삭제할건지 묻는 다이얼로그 띄우기 deleteDialog (AlertDialog 사용)
+            showDialog()
             true
         }
         else -> {
             super.onOptionsItemSelected(item)
         }
     }
+
+    private fun showDialog() {
+        val dialog: AlertDialog.Builder =
+            AlertDialog.Builder(
+                this,
+                android.R.style.Theme_Material_Light_Dialog_NoActionBar_MinWidth
+            )
+
+        dialog.apply {
+            setMessage("메모를 삭제하시겠습니까?")
+            setPositiveButton("삭제") { dialog, _ ->
+                deleteMemo()
+                dialog.dismiss()
+                finish()
+            }
+            setNegativeButton("취소") { dialog, _ ->
+                dialog.cancel()
+            }
+        }
+
+        dialog.show()
+    }
+
+    private fun deleteMemo() {
+        docRef.document("${intent.extras?.get("id") as Int}")
+            .delete()
+            .addOnSuccessListener {
+                Log.d(
+                    TAG,
+                    "DocumentSnapshot successfully deleted!"
+                )
+                Toast.makeText(this, "데이터를 성공적으로 삭제했습니다.", Toast.LENGTH_SHORT).show()
+            }
+            .addOnFailureListener { e ->
+                Log.w(TAG, "Error deleting document", e)
+            }
+    }
+
 }
