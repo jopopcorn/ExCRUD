@@ -37,6 +37,16 @@ class MainActivity : AppCompatActivity() {
         initToolbar()
         listenToDocument()
         initRecyclerView()
+        initFAB()
+    }
+
+    private fun initFAB() {
+        binding.fab.setOnClickListener {
+            val createMemoIntent = Intent(this, EditActivity()::class.java).apply {
+                putExtra("id", memoList[memoList.size-1].id+1)
+            }
+            startActivity(createMemoIntent)
+        }
     }
 
     private fun initToolbar() {
@@ -60,7 +70,6 @@ class MainActivity : AppCompatActivity() {
     }
 
     private fun adapterOnClick(memo: Memo) {
-        //TODO memo position 가져와서 putExtra 하기
         val memoIntent = Intent(this, EditActivity()::class.java).apply {
             putExtra("id", memo.id)
             putExtra("content", memo.content)
