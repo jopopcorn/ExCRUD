@@ -1,8 +1,6 @@
 package com.example.excrud
 
 import android.app.AlertDialog
-import android.app.Dialog
-import android.content.DialogInterface
 import androidx.appcompat.app.AppCompatActivity
 import android.os.Bundle
 import android.text.Editable
@@ -32,8 +30,10 @@ class EditActivity : AppCompatActivity(), TextWatcher {
         initView()
 
         if (intent.hasExtra("content")) {
+            //Edit memo
             initMemo()
         } else {
+            //Create new memo
             updateDate()
         }
 
@@ -59,9 +59,7 @@ class EditActivity : AppCompatActivity(), TextWatcher {
     }
 
     private fun updateDate() {
-        val currentTime = Calendar.getInstance().time
-        val date = SimpleDateFormat("yyyy년 MM월 dd일 HH:mm", Locale.KOREA).format(currentTime)
-
+        val date = SimpleDateFormat("yyyy-MM-dd HH:mm:ss", Locale.KOREA).format(Date())
         binding.dateText.text = date
     }
 
@@ -159,5 +157,4 @@ class EditActivity : AppCompatActivity(), TextWatcher {
                 Log.w(TAG, "Error deleting document", e)
             }
     }
-
 }

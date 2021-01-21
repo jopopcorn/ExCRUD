@@ -4,6 +4,7 @@ import android.view.LayoutInflater
 import android.view.ViewGroup
 import androidx.recyclerview.widget.RecyclerView
 import com.example.excrud.databinding.ItemMemoBinding
+import kotlin.collections.ArrayList
 
 class MemoAdapter(private val memoList: ArrayList<Memo>, private val onClick: (Memo) -> Unit) :
     RecyclerView.Adapter<MemoAdapter.ViewHolder>() {
@@ -27,9 +28,10 @@ class MemoAdapter(private val memoList: ArrayList<Memo>, private val onClick: (M
             content.text = memo.content
             date.text = memo.date
         }
+
     }
 
-    override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): MemoAdapter.ViewHolder {
+    override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): ViewHolder {
         val binding = ItemMemoBinding.inflate(LayoutInflater.from(parent.context), parent, false)
         return ViewHolder(binding, onClick)
     }

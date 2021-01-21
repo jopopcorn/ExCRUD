@@ -12,7 +12,13 @@ import com.example.excrud.databinding.ActivityMainBinding
 import com.google.firebase.firestore.DocumentChange
 import com.google.firebase.firestore.FirebaseFirestore
 import com.google.firebase.firestore.ktx.toObject
+import java.sql.Timestamp
+import java.text.SimpleDateFormat
+import java.time.format.DateTimeFormatter
+import java.util.*
 import kotlin.collections.ArrayList
+import kotlin.time.milliseconds
+import kotlin.time.seconds
 
 class MainActivity : AppCompatActivity() {
     companion object {
@@ -43,7 +49,7 @@ class MainActivity : AppCompatActivity() {
     private fun initFAB() {
         binding.fab.setOnClickListener {
             val createMemoIntent = Intent(this, EditActivity()::class.java).apply {
-                putExtra("id", memoList[memoList.size-1].id+1)
+                putExtra("id", (memoList.maxOf { x -> x.id }) + 1)
             }
             startActivity(createMemoIntent)
         }
@@ -91,43 +97,25 @@ class MainActivity : AppCompatActivity() {
                 snapshot.documentChanges.forEach { item ->
                     when (item.type) {
                         DocumentChange.Type.ADDED -> {
-                            Log.d(
-                                TAG,
-                                "Document Type ADD -> ${item.document.id}, ${item.document.data}"
+                            memoList.add(
+                                item.document.toObject(Memo::class.java)
                             )
-                            memoList.add(item.document.toObject(Memo::class.java))
+                            memoList.sort()
                             memoAdapter.notifyDataSetChanged()
                         }
                         DocumentChange.Type.MODIFIED -> {
-                            Log.d(
-                                TAG, "Document Type MODIFIED -> " +
-                                        "id - ${item.document.id}, old/new - ${item.oldIndex} & ${item.newIndex}" +
-                                        "${item.document.data}"
-                            )
 
-                            val memo = Memo(Math.toIntExact(item.document["id"] as Long)).apply {
-                                content = item.document["content"] as String
-                                date = item.document["date"] as String
-                                bookmark = item.document["bookmark"] as Boolean
-                            }
+                            (0 until memoList.size)
+                                .filter { memoList[it].id == item.document.id.toInt() }
+                                .forEach { memoList.removeAt(it) }
 
-                            if (item.oldIndex == item.newIndex) {
-                                memoList[item.oldIndex] = memo
-                                memoAdapter.notifyItemChanged(item.oldIndex)
-                            } else {
-                                memoList.removeAt(item.oldIndex)
-                                memoList[item.newIndex] = memo
-                                memoAdapter.notifyItemMoved(item.oldIndex, item.newIndex)
-                            }
+
+                            memoList.add(item.document.toObject(Memo::class.java))
                             memoAdapter.notifyDataSetChanged()
                         }
                         DocumentChange.Type.REMOVED -> {
-                            Log.d(
-                                TAG,
-                                "Document Type REMOVED -> ${item.document.id}, ${item.oldIndex}, ${item.document.data}"
-                            )
-                            memoList.removeAt(item.oldIndex)
-                            memoAdapter.notifyItemRemoved(item.oldIndex)
+                            memoList.remove(item.document.toObject(Memo::class.java))
+                            memoAdapter.notifyDataSetChanged()
                         }
                     }
                 }
