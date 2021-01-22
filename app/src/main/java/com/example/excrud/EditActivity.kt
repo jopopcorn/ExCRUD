@@ -64,7 +64,13 @@ class EditActivity : AppCompatActivity(), TextWatcher {
     }
 
     private fun updateMemo() {
-        if (!binding.contentEditText.text.equals(intent.extras?.get("id") as Int)) {
+        if (binding.contentEditText.text.trim().toString().isEmpty() && !intent.hasExtra("date")) {
+            finish()
+        } else if ((intent.hasExtra("content") && binding.dateText.text != intent.extras?.get("date")
+                .toString() && binding.contentEditText.text.trim().toString().isNotEmpty())
+            || (!intent.hasExtra("content") && binding.contentEditText.text.trim().toString()
+                .isNotEmpty())
+        ) {
             val data = Memo(intent.extras?.get("id") as Int).apply {
                 content = binding.contentEditText.text.toString()
                 date = binding.dateText.text.toString()
@@ -80,7 +86,6 @@ class EditActivity : AppCompatActivity(), TextWatcher {
                     Log.w(TAG, "Error and document", e)
                 }
         }
-
         finish()
     }
 
