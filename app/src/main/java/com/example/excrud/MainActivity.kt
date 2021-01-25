@@ -11,14 +11,8 @@ import androidx.recyclerview.widget.RecyclerView
 import com.example.excrud.databinding.ActivityMainBinding
 import com.google.firebase.firestore.DocumentChange
 import com.google.firebase.firestore.FirebaseFirestore
-import com.google.firebase.firestore.ktx.toObject
-import java.sql.Timestamp
-import java.text.SimpleDateFormat
-import java.time.format.DateTimeFormatter
 import java.util.*
 import kotlin.collections.ArrayList
-import kotlin.time.milliseconds
-import kotlin.time.seconds
 
 class MainActivity : AppCompatActivity() {
     companion object {
