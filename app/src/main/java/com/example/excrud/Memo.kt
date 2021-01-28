@@ -8,6 +8,7 @@ data class Memo(
     var date: String,
     var bookmark: Boolean
 ) : Comparable<Memo> {
+    constructor() : this(0, "", Date().toString(), false)
     constructor(id: Int) : this(id, "", Date().toString(), false)
 
     override fun compareTo(other: Memo) =
