@@ -34,7 +34,7 @@ class EditActivity : AppCompatActivity(), TextWatcher {
             initMemo()
         } else {
             //Create new memo
-            updateDate()
+            currentDate()
         }
 
     }
@@ -58,7 +58,7 @@ class EditActivity : AppCompatActivity(), TextWatcher {
         binding.dateText.text = intent.extras?.get("date").toString()
     }
 
-    private fun updateDate() {
+    private fun currentDate() {
         val date = SimpleDateFormat("yyyy-MM-dd HH:mm:ss", Locale.KOREA).format(Date())
         binding.dateText.text = date
     }
@@ -97,7 +97,7 @@ class EditActivity : AppCompatActivity(), TextWatcher {
     }
 
     override fun onTextChanged(p0: CharSequence?, p1: Int, p2: Int, p3: Int) {
-        updateDate()
+        currentDate()
     }
 
     override fun afterTextChanged(p0: Editable?) {
