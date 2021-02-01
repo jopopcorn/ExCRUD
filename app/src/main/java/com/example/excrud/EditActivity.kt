@@ -42,7 +42,9 @@ class EditActivity : AppCompatActivity(), TextWatcher {
 
     override fun onPrepareOptionsMenu(menu: Menu): Boolean {
         val deleteItem : MenuItem = menu.findItem(R.id.action_delete)
+        val exportItem : MenuItem = menu.findItem(R.id.action_export)
         deleteItem.isVisible = intent.hasExtra("content")
+        exportItem.isVisible = intent.hasExtra("content")
         return true
     }
 
