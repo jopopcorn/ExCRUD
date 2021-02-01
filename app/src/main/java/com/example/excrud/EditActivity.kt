@@ -1,6 +1,7 @@
 package com.example.excrud
 
 import android.app.AlertDialog
+import android.content.Intent
 import androidx.appcompat.app.AppCompatActivity
 import android.os.Bundle
 import android.text.Editable
@@ -114,7 +115,7 @@ class EditActivity : AppCompatActivity(), TextWatcher {
             true
         }
         R.id.action_export -> {
-            //TODO 공유하는 bottomSheet 추가
+            createShareIntent()
             true
         }
         R.id.action_delete -> {
@@ -124,6 +125,17 @@ class EditActivity : AppCompatActivity(), TextWatcher {
         else -> {
             super.onOptionsItemSelected(item)
         }
+    }
+
+    private fun createShareIntent() {
+        val sendIntent : Intent = Intent().apply{
+            action = Intent.ACTION_SEND
+            putExtra(Intent.EXTRA_TEXT, binding.contentEditText.text.toString())
+            type = "text/plain"
+        }
+
+        val shareIntent = Intent.createChooser(sendIntent, null)
+        startActivity(shareIntent)
     }
 
     private fun showDialog() {
