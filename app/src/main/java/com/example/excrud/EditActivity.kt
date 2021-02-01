@@ -40,6 +40,12 @@ class EditActivity : AppCompatActivity(), TextWatcher {
 
     }
 
+    override fun onPrepareOptionsMenu(menu: Menu): Boolean {
+        val deleteItem : MenuItem = menu.findItem(R.id.action_delete)
+        deleteItem.isVisible = intent.hasExtra("content")
+        return true
+    }
+
     private fun initView() {
         initToolbar()
         binding.contentEditText.addTextChangedListener(this)
